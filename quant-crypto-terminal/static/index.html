@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Quant Terminal — Crypto Research</title>
+  <link rel="stylesheet" href="/static/styles.css"/>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">Q</div><div><div class="brand-title">QUANT TERMINAL</div><div class="brand-sub">PAPER TRADING · RESEARCH ENVIRONMENT</div></div></div>
+      <div class="status"><span class="dot" id="liveDot"></span><span id="feedStatus">Connecting market feed…</span><span class="divider"></span><span>SIM · USD 10,000</span></div>
+    </header>
+
+    <main>
+      <section class="kpis" id="kpis">
+        <div class="kpi"><span>Portfolio value</span><strong id="portfolioValue">$10,000.00</strong><em id="pnlPct">0.00%</em></div>
+        <div class="kpi"><span>Cash</span><strong id="cash">$10,000.00</strong><em>Available</em></div>
+        <div class="kpi"><span>Exposure</span><strong id="exposure">0.00%</strong><em id="invested">$0.00 invested</em></div>
+        <div class="kpi"><span>Unrealized P&amp;L</span><strong id="unrealized">$0.00</strong><em>Mark-to-market</em></div>
+        <div class="kpi"><span>Sharpe</span><strong id="sharpe">—</strong><em>Portfolio series</em></div>
+        <div class="kpi"><span>Max drawdown</span><strong id="drawdown">—</strong><em>Observed</em></div>
+      </section>
+
+      <section class="grid-3">
+        <article class="panel market-panel">
+          <div class="panel-head"><div><h2>Live Market</h2><p>Binance public market data</p></div><span class="badge">REAL-TIME</span></div>
+          <div class="market-list" id="marketList"></div>
+        </article>
+
+        <article class="panel chart-panel">
+          <div class="panel-head"><div><h2 id="chartTitle">BTC / USDT</h2><p id="chartMeta">Waiting for historical data…</p></div><div class="tabs"><button class="tab active" data-asset="BTC">BTC</button><button class="tab" data-asset="ETH">ETH</button><button class="tab" data-asset="SOL">SOL</button></div></div>
+          <canvas id="priceChart" height="250"></canvas>
+        </article>
+
+        <article class="panel trade-panel">
+          <div class="panel-head"><div><h2>Paper Trade</h2><p>Server-priced market orders</p></div><span class="badge">NO REAL MONEY</span></div>
+          <div class="trade-switch"><button id="buyBtn" class="side active">BUY</button><button id="sellBtn" class="side">SELL</button></div>
+          <label>Asset<select id="orderAsset"><option>BTC</option><option>ETH</option><option>SOL</option></select></label>
+          <label>Quantity<input id="qty" inputmode="decimal" placeholder="0.01000000"/></label>
+          <div class="quote-row"><span>Live execution price</span><b id="execPrice">—</b></div>
+          <div class="quote-row"><span>Estimated value</span><b id="estimate">—</b></div>
+          <button id="submitOrder" class="primary">Place BUY order</button>
+          <div id="orderMsg" class="msg"></div>
+        </article>
+      </section>
+
+      <section class="grid-2">
+        <article class="panel holdings-panel">
+          <div class="panel-head"><div><h2>Portfolio</h2><p>Backend source of truth</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Asset</th><th>Quantity</th><th>Mark</th><th>Value</th><th>Avg cost</th></tr></thead><tbody id="holdingsBody"></tbody></table></div>
+        </article>
+        <article class="panel trades-panel">
+          <div class="panel-head"><div><h2>Trade History</h2><p>Latest paper executions</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Time</th><th>Side</th><th>Asset</th><th>Qty</th><th>Price</th><th>Fee</th></tr></thead><tbody id="tradesBody"></tbody></table></div>
+        </article>
+      </section>
+
+      <section class="panel research-panel">
+        <div class="panel-head"><div><h2>Quant Research Lab</h2><p>Chronological research pipeline · features → signals → walk-forward ML → backtest</p></div><div class="research-controls"><select id="researchAsset"><option>BTC</option><option>ETH</option><option>SOL</option></select><select id="strategy"><option value="quant_composite">Quant Composite</option><option value="buy_hold">Buy &amp; Hold</option><option value="sma_crossover">SMA Crossover</option><option value="momentum">Momentum</option><option value="mean_reversion">Mean Reversion</option></select><button id="runResearch" class="primary compact">Run Research</button></div></div>
+        <div class="research-grid">
+          <div class="signal-grid">
+            <div class="signal-card"><span>Momentum</span><strong id="sigMomentum">—</strong></div><div class="signal-card"><span>Trend</span><strong id="sigTrend">—</strong></div><div class="signal-card"><span>Mean Reversion</span><strong id="sigMeanRev">—</strong></div><div class="signal-card"><span>Volatility Regime</span><strong id="sigVol">—</strong></div><div class="signal-card highlight"><span>Composite</span><strong id="sigComposite">—</strong></div><div class="signal-card"><span>RSI</span><strong id="sigRsi">—</strong></div>
+          </div>
+          <div class="research-summary">
+            <div class="ml-box"><div class="smallcaps">ML ESTIMATE</div><div class="prob" id="mlProb">—</div><div id="mlSignal" class="ml-signal neutral">Not trained</div><p id="mlMethod">Logistic Regression · expanding walk-forward evaluation</p></div>
+            <div class="metrics-row"><div><span>Return</span><b id="btReturn">—</b></div><div><span>Sharpe</span><b id="btSharpe">—</b></div><div><span>Max DD</span><b id="btDD">—</b></div><div><span>Trades</span><b id="btTrades">—</b></div></div>
+          </div>
+        </div>
+        <div class="mini-chart-wrap"><canvas id="equityChart" height="180"></canvas></div>
+        <details class="explain"><summary>Model explainability</summary><div id="coefList" class="coef-list"><span>Run research to view coefficients.</span></div></details>
+      </section>
+
+      <section class="panel assumptions">
+        <div class="panel-head"><div><h2>Research Assumptions</h2><p>Explicit, reproducible baseline choices</p></div></div>
+        <div class="assumption-grid">
+          <div><b>Returns</b><span>Simple and log returns from close-to-close bars.</span></div>
+          <div><b>ML target</b><span>Next configurable N-period return exceeds threshold.</span></div>
+          <div><b>Validation</b><span>Expanding chronological walk-forward; no random shuffle.</span></div>
+          <div><b>Fee</b><span>0.10% baseline paper-trading/backtest cost.</span></div>
+          <div><b>Risk-free</b><span>0% baseline for educational Sharpe calculation.</span></div>
+          <div><b>Signals</b><span>Normalized to approximately −1…+1; thresholds configurable.</span></div>
+        </div>
+      </section>
+    </main>
+    <footer>Educational paper simulator · Analytical signals are model estimates, not guaranteed outcomes.</footer>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
